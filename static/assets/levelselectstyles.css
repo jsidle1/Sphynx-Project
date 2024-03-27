@@ -1,0 +1,46 @@
+body
+{
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+.center
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.grid
+{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+a
+{
+    margin: 20px 20px 20px 20px;
+    padding: 20px 20px 20px 20px;
+    border: 1px solid black;
+    text-decoration: none;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: russo;
+}
+.level-completed
+{
+    background-color: #22BB44;
+}
+.level-unlocked
+{
+    background-color: #00BBCC;
+}
+.level-locked
+{
+    background-color: #AAA;
+}
+@font-face {
+    font-family: russo;
+    src: url(./RussoOne-Regular.ttf);
+}

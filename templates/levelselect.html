@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/levelselectstyles.css') }}">
+    <title>DDR Phaser</title>
+</head>
+<body>
+    <div class="center">
+        <div class="grid">
+            <a class="level-completed" href="{{ url_for('game') }}">Level 1</a>
+            <a class="level-unlocked">Level 2</a>
+            <a class="level-locked">Level 3</a>
+            <a class="level-unlocked">Nightmare 1</a>
+            <a class="level-locked">Nightmare 2</a>
+            <a class="level-locked">Nightmare 3</a>
+        </div>
+    </div>
+</body>
+</html>
