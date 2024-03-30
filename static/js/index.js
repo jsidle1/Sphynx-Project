@@ -32,7 +32,7 @@ const NUM_COLORS = 4;
 const MS_PER_SECOND = 1000;
 const PAINTS_PER_SECOND = 60;
 const BEATS_PER_SECOND = 1;
-const DROP_FACTOR = 2;
+const DROP_FACTOR = 2 * difficulty;
 const ROOM_FOR_ERROR = 20;
 const ARROW_SIZE = 50;
 
@@ -48,48 +48,48 @@ var activeColor = 0;
 var score = 0;
 var paused = false;
 
-script = [
-    EMPTY, 
-    DOWN, 
-    EMPTY, 
-    RIGHT, 
-    RIGHT, 
-    LEFT, 
-    LEFT, 
-    UP, 
-    LEFT, 
-    UP, 
-    UP, 
-    DOWN,
-    EMPTY, 
-    DOWN, 
-    EMPTY, 
-    RIGHT, 
-    RIGHT, 
-    EMPTY, 
-    LEFT, 
-    EMPTY, 
-    LEFT, 
-    UP, 
-    EMPTY, 
-    DOWN,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY,
-    EMPTY
-]
+// sscript = [
+//     EMPTY, 
+//     DOWN, 
+//     EMPTY, 
+//     RIGHT, 
+//     RIGHT, 
+//     LEFT, 
+//     LEFT, 
+//     UP, 
+//     LEFT, 
+//     UP, 
+//     UP, 
+//     DOWN,
+//     EMPTY, 
+//     DOWN, 
+//     EMPTY, 
+//     RIGHT, 
+//     RIGHT, 
+//     EMPTY, 
+//     LEFT, 
+//     EMPTY, 
+//     LEFT, 
+//     UP, 
+//     EMPTY, 
+//     DOWN,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY,
+//     EMPTY
+// ]
 
 // holder for sprite, color, and direction of the arrow
 class Arrow{
@@ -251,7 +251,15 @@ class Game extends Phaser.Scene
 
             if(beat>=script.length) // end of script
             {
-                beat = 0;
+                $.ajax({
+                    type : 'POST',
+                    url : scoreUrl,
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: 'json',
+                    data : JSON.stringify({name:tname, score:score})
+                });
+
+                window.location.replace(`${window.location.origin}/levels?name=${name}`);
             }
         }
         
@@ -291,29 +299,6 @@ class Game extends Phaser.Scene
 
             prevPaint=time; // update time
         }
-    }
-}
-
-class MenuScene extends Phaser.Scene
-{
-    constructor()
-    {
-        super();
-    }
-
-    preload()
-    {
-
-    }
-
-    create()
-    {
-
-    }
-
-    update()
-    {
-        
     }
 }
 

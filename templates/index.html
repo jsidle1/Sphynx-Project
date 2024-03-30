@@ -4,10 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="{{ url_for('static', filename='js/phaser.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
     <link rel="stylesheet" href="{{url_for('static', filename='assets/gamestyles.css')}}">
     <title>DDR Phaser</title>
 </head>
 <body>
+    <script>
+        var difficulty = {{ data.difficulty }};
+        var script = {{ data.script }};
+        var tname = '{{ data.name }}';
+        var scoreUrl = '{{ url_for('score') }}';
+    </script>
     <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
     

@@ -16,10 +16,11 @@ body
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 }
-a
+input
 {
+    width: 100px;
+    height: 75px;
     margin: 20px 20px 20px 20px;
-    padding: 20px 20px 20px 20px;
     border: 1px solid black;
     text-decoration: none;
     color: black;
@@ -27,6 +28,7 @@ a
     justify-content: center;
     align-items: center;
     font-family: russo;
+    cursor: pointer;
 }
 .level-completed
 {

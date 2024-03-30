@@ -9,12 +9,43 @@
 <body>
     <div class="center">
         <div class="grid">
-            <a class="level-completed" href="{{ url_for('game') }}">Level 1</a>
-            <a class="level-unlocked">Level 2</a>
-            <a class="level-locked">Level 3</a>
-            <a class="level-unlocked">Nightmare 1</a>
-            <a class="level-locked">Nightmare 2</a>
-            <a class="level-locked">Nightmare 3</a>
+            <form method="post">
+                <input name="name" type="hidden" value="{{ data.name }}">
+                <input name="level" type="hidden" value="1"></input>
+                <input name="difficulty" type="hidden" value="1"></input>
+                <input type="submit" class="level-completed" value="Level 1"></input>
+
+            </form>
+            <form method="post">
+                <input name="level" type="hidden" value="2"></input>
+                <input name="difficulty" type="hidden" value="1"></input>
+                <input type="submit" class="level-completed" value="Level 2"></input>
+
+            </form>
+            <form method="post">
+                <input name="level" type="hidden" value="3"></input>
+                <input name="difficulty" type="hidden" value="1"></input>
+                <input type="submit" class="level-completed" value="Level 3"></input>
+
+            </form>
+            <form method="post">
+                <input name="level" type="hidden" value="1"></input>
+                <input name="difficulty" type="hidden" value="2"></input>
+                <input type="submit" class="level-completed" value="Nightmare 1"></input>
+
+            </form>
+            <form method="post">
+                <input name="level" type="hidden" value="2"></input>
+                <input name="difficulty" type="hidden" value="2"></input>
+                <input type="submit" class="level-completed" value="Nightmare 2"></input>
+
+            </form>
+            <form method="post">
+                <input name="level" type="hidden" value="3"></input>
+                <input name="difficulty" type="hidden" value="2"></input>
+                <input type="submit" class="level-completed" value="Nightmare 3"></input>
+
+            </form>
         </div>
     </div>
 </body>
