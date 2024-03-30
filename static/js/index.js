@@ -256,7 +256,7 @@ class Game extends Phaser.Scene
                     url : scoreUrl,
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
-                    data : JSON.stringify({name:tname, score:score})
+                    data : JSON.stringify({name:name, score:score})
                 });
 
                 window.location.replace(`${window.location.origin}/levels?name=${name}`);
