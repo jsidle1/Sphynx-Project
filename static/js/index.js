@@ -10,7 +10,7 @@ const LEFT_X = 300;
 const UP_X = 400;
 const DOWN_X = 500;
 const RIGHT_X = 600;
-const ARROW_Y = 500;
+const ARROW_Y = 480;
 const SCREEN_HEIGHT = 600;
 const SCREEN_WIDTH = 900;
 
@@ -42,11 +42,13 @@ var prevPaint = 0;
 var currStartTime = 0;
 var beat = 0;
 var currArrows = [];
+var dyingArrows = [];
 var currKey = EMPTY;
 var currColor = BLUE;
 var activeColor = 0;
 var score = 0;
-var paused = false;
+var paused = true;
+var musicPlaying = false;
 
 // sscript = [
 //     EMPTY, 
@@ -93,11 +95,17 @@ var paused = false;
 
 // holder for sprite, color, and direction of the arrow
 class Arrow{
-    constructor(direction, color, sprite)
+    constructor(direction, color, sprite, timestamp)
     {
+        this.timestamp = timestamp;
         this.direction = direction;
         this.color = color;
         this.sprite = sprite;
+    }
+
+    blowup()
+    {
+        this.sprite.setScale
     }
 }
 
@@ -194,8 +202,15 @@ class Game extends Phaser.Scene
         this.load.image('pink_arrow_up', 'static/assets/Pink_Arrow_Up.png');
         this.load.image('pink_arrow_left', 'static/assets/Pink_Arrow_Left.png');
         this.load.image('pink_arrow_right', 'static/assets/Pink_Arrow_Right.png');
+
+        // how to play screen
+        this.load.image('how_to_play', 'static/assets/How_To_Play.png');
+
+        // audio asset
+        this.load.audio('dance', 'static/music/dance.mp3');
         
-        this.add.text(0,0,'', {fontFamily:'russo', opacity:'0'}); // load font to make sure its downloaded in time
+        // load font to make sure its downloaded in time
+        this.add.text(0,0,'', {fontFamily:'russo', opacity:'0'});
     }
 
     create ()
@@ -217,22 +232,30 @@ class Game extends Phaser.Scene
         this.scoreText.setTint(HEX_BLACK);
         this.scoreText.text = '0';
 
+        this.instructions = this.add.image(450, 300, 'how_to_play');
+        
         // pause button
-        this.pauseButton = this.add.text(0,40,'pauseText', {fontFamily:'russo', fontSize:'40px'}).setOrigin(0).setInteractive();
-        this.pauseButton.setTint(HEX_BLACK);
-        this.pauseButton.text = '| |';
+        this.pauseButton = this.add.text(350,500,'pauseText', {fontFamily:'russo', fontSize:'40px'}).setOrigin(0).setInteractive();
+        this.pauseButton.setTint(HEX_RED);
+        this.pauseButton.text = 'Start Game';
 
         // pause event
         this.pauseButton.on('pointerup', ()=>{
+            this.instructions.destroy(true);
+            this.pauseButton.destroy(true);
+            this.bgMusic.play()
+            musicPlaying = true;
             paused = !paused;
         });
+
+        this.bgMusic = this.sound.add('dance', {volume:0.5, loop:false});
     }
 
     update (time, delta)
     {
         if(paused)
         {
-            prevTime += delta;
+            prevTime = time;
             return;
         }
 
@@ -243,7 +266,7 @@ class Game extends Phaser.Scene
             {
                 let tcolor = Math.floor(Math.random()*NUM_COLORS)+1; // choose random color
                 // push arrow to the front of the array that functions as a queue of arrows (oldest in the back);
-                currArrows.unshift(new Arrow(script[beat], tcolor, this.add.sprite(getX(script[beat]), 0, getSpriteString(script[beat], tcolor)).setScale(0.0625)));
+                currArrows.unshift(new Arrow(script[beat], tcolor, this.add.sprite(getX(script[beat]), 0, getSpriteString(script[beat], tcolor)).setScale(0.0625), time));
             }
 
             prevTime = time; // update time
@@ -251,6 +274,10 @@ class Game extends Phaser.Scene
 
             if(beat>=script.length) // end of script
             {
+                if(musicPlaying)
+                {
+                    this.bgMusic.stop();
+                }
                 $.ajax({
                     type : 'POST',
                     url : scoreUrl,
@@ -267,6 +294,21 @@ class Game extends Phaser.Scene
         if((time-prevPaint) >= (MS_PER_SECOND/PAINTS_PER_SECOND))
         {
             let toDelete = 0; // variable to determine which arrows are terminated on each paint
+            let toDeleteDying = 0;
+
+            for(const arrow of dyingArrows)
+            {
+                arrow.sprite.setScale(arrow.sprite.scale + 0.0075);
+                if(arrow.sprite.scale >= 0.08){
+                    toDeleteDying++;
+                }
+            }
+
+            // loop through and pop/destroy sprites that are done
+            for(let i = 0; i < toDeleteDying; i++)
+            {
+                dyingArrows.pop().sprite.destroy(true);
+            }
 
             // loop through game objects
             for(const arrow of currArrows)
@@ -276,6 +318,7 @@ class Game extends Phaser.Scene
                 // if arrow is in target area and correct direction/color is inputted
                 if(arrow.sprite.y > (ARROW_Y-(ARROW_SIZE)) && arrow.sprite.y < (ARROW_Y+(ARROW_SIZE)) && arrow.direction == currKey && arrow.color == currColor)
                 {
+                    
                     score+=(ARROW_SIZE)-Math.abs(ARROW_Y-arrow.sprite.y); // score updated based on how close it is to target
                     toDelete++; // one arrow will be popped from queue
 
@@ -294,7 +337,7 @@ class Game extends Phaser.Scene
             // loop through and pop/destroy sprites that are done
             for(let i = 0; i < toDelete; i++)
             {
-                currArrows.pop().sprite.destroy(true);
+                dyingArrows.push(currArrows.pop());
             }
 
             prevPaint=time; // update time
