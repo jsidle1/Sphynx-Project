@@ -15,7 +15,7 @@ def init_db():
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         cursor.execute('CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, completed_levels INTEGER, completed_difficulty INTEGER)')
-        cursor.execute('CREATE TABLE IF NOT EXISTS score (username TEXT PRIMARY KEY, score INTEGER, level_number INTEGER, level_difficulty INTEGER)')
+        cursor.execute('CREATE TABLE IF NOT EXISTS score (user_username TEXT PRIMARY KEY, score INTEGER, level_number INTEGER, level_difficulty INTEGER)')
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
