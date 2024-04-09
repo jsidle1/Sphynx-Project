@@ -3,13 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/loginstyles.css') }}">
     <title>DDR Phaser</title>
 </head>
 <body>
-    <form method="post">
-        <input name="name" type="text" placeholder="Username">
-        <input name="password" type="password" placeholder="Password">
-        <input type="submit">
-    </form>
+    <img class="sphynx" src="{{url_for('static', filename='assets/Sphynx.png')}}">
+    <div class="title">Sphynx Beats</div>
+    <div class="center">
+        <div>
+            <form class="holder" method="post">
+                <input class="input-input" name="name" type="text" placeholder="Username">
+                <input class="input-input" name="password" type="password" placeholder="Password">
+                <input class="input-submit" type="submit" value="Login">
+            </form>
+        </div>
+    </div>
 </body>
 </html>
