@@ -93,6 +93,23 @@ var musicPlaying = false;
 //     EMPTY
 // ]
 
+function getColors(lev, diff)
+{
+    if(diff == 2)
+    {
+        return 4;
+    }
+    switch(lev)
+    {
+        case 1:
+            return 1;
+        case 2:
+            return 2;
+        case 3:
+            return 3;
+    }
+}
+
 // holder for sprite, color, and direction of the arrow
 class Arrow{
     constructor(direction, color, sprite, timestamp)
@@ -264,7 +281,7 @@ class Game extends Phaser.Scene
         {
             if(script[beat] != EMPTY) // if beat exists, get the arrow
             {
-                let tcolor = Math.floor(Math.random()*NUM_COLORS)+1; // choose random color
+                let tcolor = Math.floor(Math.random()*getColors(level, difficulty))+1; // choose random color
                 // push arrow to the front of the array that functions as a queue of arrows (oldest in the back);
                 currArrows.unshift(new Arrow(script[beat], tcolor, this.add.sprite(getX(script[beat]), 0, getSpriteString(script[beat], tcolor)).setScale(0.0625), time));
             }
