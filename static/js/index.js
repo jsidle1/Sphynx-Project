@@ -261,16 +261,26 @@ class Game extends Phaser.Scene
         // how to play screen
         this.load.image('how_to_play', 'static/assets/How_To_Play.png');
 
+        // background image
+        this.load.image('sphynx', 'static/assets/Sphynx.png');
+        this.load.image('game_bg', 'static/assets/Game_bg.png');
+
         // audio asset
         this.load.audio('dance', 'static/music/dance.mp3');
         
         // load font to make sure its downloaded in time
         this.add.text(0,0,'', {fontFamily:'russo', opacity:'0'});
-        this.comboText = this.add.text(SCREEN_WIDTH-200, SCREEN_HEIGHT/4, '', {fontFamily:'russo', opacity:'0', fontSize:'40px'});
     }
-
+    
     create ()
     {
+        // background image
+        this.add.image(450, 300, 'game_bg');
+        this.add.image(450, 300, 'sphynx').setScale(0.3);
+        
+        // combo text
+        this.comboText = this.add.text(SCREEN_WIDTH-200, SCREEN_HEIGHT/4, '', {fontFamily:'russo', opacity:'0', fontSize:'40px'});
+
         // create open arrows at the bottom of the screen
         this.add.image(LEFT_X, ARROW_Y, 'arrow_left').setScale(0.0625);
         this.add.image(UP_X, ARROW_Y, 'arrow_up').setScale(0.0625);
@@ -278,17 +288,26 @@ class Game extends Phaser.Scene
         this.add.image(RIGHT_X, ARROW_Y, 'arrow_right').setScale(0.0625);
 
         // active color text
-        this.colorText = this.add.text(0,SCREEN_HEIGHT-40,'colorText', {fontFamily:'russo', fontSize:'40px'});
+        this.colorText = this.add.text(5,SCREEN_HEIGHT-45,'colorText', {fontFamily:'russo', fontSize:'40px'});
         this.colorText.text = 'ACTIVE COLOR';
         this.colorText.setTint(HEX_BLUE);
         activeColor = this.colorText;
 
         // score text
-        this.scoreText = this.add.text(SCREEN_WIDTH-100, SCREEN_HEIGHT-40, 'scoreText', {fontFamily:'russo', fontSize:'40px'});
+        this.scoreText = this.add.text(SCREEN_WIDTH-100, SCREEN_HEIGHT-45, 'scoreText', {fontFamily:'russo', fontSize:'40px'});
         this.scoreText.setTint(HEX_BLACK);
         this.scoreText.text = '0';
 
+        // level text
+        this.levelText = this.add.text(5, 5, 'levelText', {fontFamily:'russo', fontSize:'40px'});
+        this.levelText.setTint(HEX_BLACK);
+        this.levelText.text = `${difficulty<2?"Level":"Nightmare"} ${level}`;
+
+        // instructions prompt
         this.instructions = this.add.image(450, 300, 'how_to_play');
+        
+        // background image
+        this.add.image()
         
         // pause button
         this.pauseButton = this.add.text(350,500,'pauseText', {fontFamily:'russo', fontSize:'40px'}).setOrigin(0).setInteractive();
@@ -297,9 +316,9 @@ class Game extends Phaser.Scene
 
         // pause event
         this.pauseButton.on('pointerup', ()=>{
-            this.instructions.x = 150;
-            this.instructions.y = 150;
-            this.instructions.setScale(0.4);
+            // this.instructions.x = 150;
+            // this.instructions.y = 150;
+            this.instructions.destroy(true);
             this.pauseButton.destroy(true);
             this.bgMusic.play()
             musicPlaying = true;
