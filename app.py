@@ -51,7 +51,7 @@ def levels():
         name = str(request.form['name'])
         session['current_level'] = level
         session['current_difficulty'] = difficulty
-        data = {'script':level_scripts[level-1], 'difficulty':difficulty, 'name':name}
+        data = {'script':level_scripts[level-1], 'difficulty':difficulty, 'name':name, 'level':level}
         return render_template('./index.html', data=data)
     else:
         if(request.args['name'] is None):
