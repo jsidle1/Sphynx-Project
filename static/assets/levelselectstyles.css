@@ -36,7 +36,8 @@ input
     width: 100px;
     height: 75px;
     margin: 20px 20px 20px 20px;
-    border: 1px solid black;
+    border: 3px solid black;
+    border-radius: 10px;
     text-decoration: none;
     color: black;
     display: flex;
