@@ -248,7 +248,7 @@ class Game extends Phaser.Scene
             paused = !paused;
         });
 
-        this.bgMusic = this.sound.add('dance', {volume:0.5, loop:false});
+        this.bgMusic = this.sound.add('dance', {volume:0.5, loop:false}).setRate(1*difficulty);
     }
 
     update (time, delta)
