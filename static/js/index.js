@@ -36,6 +36,13 @@ const DROP_FACTOR = 2 * difficulty;
 const ROOM_FOR_ERROR = 20;
 const ARROW_SIZE = 50;
 
+// game constants
+const MID_THRESHOLD = 20;
+const HIGH_THRESHOLD = 40;
+const GOOD_POINTS = 10;
+const GREAT_POINTS = 30;
+const PERFECT_POINTS = 50;
+
 // game globals
 var prevTime = 0;
 var prevPaint = 0;
@@ -92,6 +99,37 @@ var musicPlaying = false;
 //     EMPTY,
 //     EMPTY
 // ]
+
+function getColorHex(color)
+{
+    switch(color)
+    {
+        case BLUE:
+            return HEX_BLUE;
+        case RED:
+            return HEX_RED;
+        case GREEN:
+            return HEX_GREEN;
+        case PINK:
+            return HEX_PINK;
+        default:
+            return HEX_BLACK;
+    }
+}
+
+function getScore(distance)
+{
+    if(distance < MID_THRESHOLD)
+    {
+        return GOOD_POINTS;
+    }
+    else if(distance < HIGH_THRESHOLD)
+    {
+        return GREAT_POINTS;
+    }
+
+    return PERFECT_POINTS;
+}
 
 function getColors(lev, diff)
 {
@@ -228,6 +266,7 @@ class Game extends Phaser.Scene
         
         // load font to make sure its downloaded in time
         this.add.text(0,0,'', {fontFamily:'russo', opacity:'0'});
+        this.comboText = this.add.text(SCREEN_WIDTH-200, SCREEN_HEIGHT/4, '', {fontFamily:'russo', opacity:'0', fontSize:'40px'});
     }
 
     create ()
@@ -312,6 +351,10 @@ class Game extends Phaser.Scene
         // update on each paint
         if((time-prevPaint) >= (MS_PER_SECOND/PAINTS_PER_SECOND))
         {
+            // GOOD/GREAT/PERFECT Text
+            this.comboText.setAlpha(this.comboText.alpha-0.01);
+            this.comboText.setScale(this.comboText.scale-0.01)
+
             let toDelete = 0; // variable to determine which arrows are terminated on each paint
             let toDeleteDying = 0;
 
@@ -335,10 +378,35 @@ class Game extends Phaser.Scene
                 arrow.sprite.y += DROP_FACTOR; // move arrow
 
                 // if arrow is in target area and correct direction/color is inputted
-                if(arrow.sprite.y > (ARROW_Y-(ARROW_SIZE)) && arrow.sprite.y < (ARROW_Y+(ARROW_SIZE)) && arrow.direction == currKey && arrow.color == currColor)
+                if(arrow.sprite.y > (ARROW_Y-(ARROW_SIZE)) && arrow.sprite.y < (ARROW_Y+(ARROW_SIZE)) && arrow.color == currColor && currKey != EMPTY)
                 {
-                    
-                    score+=(ARROW_SIZE)-Math.abs(ARROW_Y-arrow.sprite.y); // score updated based on how close it is to target
+                    let tscore = getScore((ARROW_SIZE)-Math.abs(ARROW_Y-arrow.sprite.y));
+                    if(arrow.direction != currKey)
+                    {
+                        tscore = 0;
+                    }
+                    score+=tscore; // score updated based on how close it is to target
+
+                    if(tscore == 0)
+                    {
+                        this.comboText.text = "MISS";
+                    }
+                    else if(tscore == GOOD_POINTS)
+                    {
+                        this.comboText.text = "GOOD";
+                    }
+                    else if(tscore == GREAT_POINTS)
+                    {
+                        this.comboText.text = "GREAT";
+                    }
+                    else
+                    {
+                        this.comboText.text = "PERFECT";
+                    }
+                    this.comboText.setAlpha(1);
+                    this.comboText.setScale(1);
+                    this.comboText.setTint(getColorHex(arrow.color))
+
                     toDelete++; // one arrow will be popped from queue
 
                     this.scoreText.text = score.toString(); // update score text
