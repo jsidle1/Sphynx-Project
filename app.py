@@ -20,6 +20,7 @@ def init_db():
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
 def index():
+    data = {"err_msg":""}
     if(request.method == 'POST'):
         username = request.form['name']
         password = request.form['password']
@@ -39,9 +40,10 @@ def index():
                 if user and user['password'] == password:
                     return redirect(url_for('levels', name=username))
                 else:
-                    return "Invalud username or password.", 400
+                    data["err_msg"] = f"Invalid password for account: {username}"
+                    return render_template('./login.html', data=data)
     else:
-        return render_template('./login.html')
+        return render_template('./login.html', data=data)
     
 @app.route('/levels', methods=['GET', 'POST'])
 def levels():
