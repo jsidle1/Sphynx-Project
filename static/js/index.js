@@ -31,7 +31,7 @@ const NUM_COLORS = 4;
 // animation and bounds
 const MS_PER_SECOND = 1000;
 const PAINTS_PER_SECOND = 60;
-const BEATS_PER_SECOND = 1;
+const BEATS_PER_SECOND = 1 * difficulty;
 const DROP_FACTOR = 2 * difficulty;
 const ROOM_FOR_ERROR = 20;
 const ARROW_SIZE = 50;
@@ -121,14 +121,14 @@ function getScore(distance)
 {
     if(distance < MID_THRESHOLD)
     {
-        return GOOD_POINTS;
+        return GOOD_POINTS * difficulty;
     }
     else if(distance < HIGH_THRESHOLD)
     {
-        return GREAT_POINTS;
+        return GREAT_POINTS * difficulty;
     }
 
-    return PERFECT_POINTS;
+    return PERFECT_POINTS * difficulty;
 }
 
 function getColors(lev, diff)
@@ -375,6 +375,7 @@ class Game extends Phaser.Scene
             // loop through game objects
             for(const arrow of currArrows)
             {
+                let deleted = false;
                 arrow.sprite.y += DROP_FACTOR; // move arrow
 
                 // if arrow is in target area and correct direction/color is inputted
@@ -391,11 +392,11 @@ class Game extends Phaser.Scene
                     {
                         this.comboText.text = "MISS";
                     }
-                    else if(tscore == GOOD_POINTS)
+                    else if(tscore == GOOD_POINTS*difficulty)
                     {
                         this.comboText.text = "GOOD";
                     }
-                    else if(tscore == GREAT_POINTS)
+                    else if(tscore == GREAT_POINTS*difficulty)
                     {
                         this.comboText.text = "GREAT";
                     }
@@ -408,6 +409,7 @@ class Game extends Phaser.Scene
                     this.comboText.setTint(getColorHex(arrow.color))
 
                     toDelete++; // one arrow will be popped from queue
+                    deleted = true;
 
                     this.scoreText.text = score.toString(); // update score text
 
@@ -416,6 +418,9 @@ class Game extends Phaser.Scene
 
                 // remove arrows that hit the bottom
                 if(arrow.sprite.y >= SCREEN_HEIGHT-ARROW_SIZE)
+                {
+                    toDelete++;
+                } else if(toDelete >= 1 && !deleted)
                 {
                     toDelete++;
                 }
