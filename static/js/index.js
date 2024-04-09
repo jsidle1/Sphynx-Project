@@ -100,6 +100,20 @@ var musicPlaying = false;
 //     EMPTY
 // ]
 
+function getRandomCostume()
+{
+    let costume_strings = 
+    [
+        "Sphynx_Earbuds",
+        "Sphynx_Headphones_Ears",
+        "Sphynx_Headphones_Mic",
+        "Sphynx_Pods",
+        "Sphynx_Speakers",
+        "Sphynx"
+    ]
+    return "static/assets/" + costume_strings[Math.floor(Math.random()*costume_strings.length)] + ".png";
+}
+
 function getColorHex(color)
 {
     switch(color)
@@ -262,7 +276,7 @@ class Game extends Phaser.Scene
         this.load.image('how_to_play', 'static/assets/How_To_Play.png');
 
         // background image
-        this.load.image('sphynx', 'static/assets/Sphynx.png');
+        this.load.image('sphynx', getRandomCostume());
         this.load.image('game_bg', 'static/assets/Game_bg.png');
 
         // audio asset
