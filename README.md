@@ -1,4 +1,4 @@
-# Sphynx Beats
+# Beat Sphynx
 
 ## How to run
 1. Clone repository
