@@ -1,4 +1,4 @@
-# DDR Clone
+# Sphynx Beats
 
 ## How to run
 1. Clone repository
