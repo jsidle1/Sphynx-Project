@@ -31,7 +31,7 @@ const NUM_COLORS = 4;
 // animation and bounds
 const MS_PER_SECOND = 1000;
 const PAINTS_PER_SECOND = 60;
-const BEATS_PER_SECOND = 1;
+const BEATS_PER_SECOND = 1 * difficulty;
 const DROP_FACTOR = 2 * difficulty;
 const ROOM_FOR_ERROR = 20;
 const ARROW_SIZE = 50;
@@ -100,6 +100,20 @@ var musicPlaying = false;
 //     EMPTY
 // ]
 
+function getRandomCostume()
+{
+    let costume_strings = 
+    [
+        "Sphynx_Earbuds",
+        "Sphynx_Headphones_Ears",
+        "Sphynx_Headphones_Mic",
+        "Sphynx_Pods",
+        "Sphynx_Speakers",
+        "Sphynx"
+    ]
+    return "static/assets/" + costume_strings[Math.floor(Math.random()*costume_strings.length)] + ".png";
+}
+
 function getColorHex(color)
 {
     switch(color)
@@ -121,14 +135,14 @@ function getScore(distance)
 {
     if(distance < MID_THRESHOLD)
     {
-        return GOOD_POINTS;
+        return GOOD_POINTS * difficulty;
     }
     else if(distance < HIGH_THRESHOLD)
     {
-        return GREAT_POINTS;
+        return GREAT_POINTS * difficulty;
     }
 
-    return PERFECT_POINTS;
+    return PERFECT_POINTS * difficulty;
 }
 
 function getColors(lev, diff)
@@ -261,16 +275,26 @@ class Game extends Phaser.Scene
         // how to play screen
         this.load.image('how_to_play', 'static/assets/How_To_Play.png');
 
+        // background image
+        this.load.image('sphynx', getRandomCostume());
+        this.load.image('game_bg', 'static/assets/Game_bg.png');
+
         // audio asset
         this.load.audio('dance', 'static/music/dance.mp3');
         
         // load font to make sure its downloaded in time
         this.add.text(0,0,'', {fontFamily:'russo', opacity:'0'});
-        this.comboText = this.add.text(SCREEN_WIDTH-200, SCREEN_HEIGHT/4, '', {fontFamily:'russo', opacity:'0', fontSize:'40px'});
     }
-
+    
     create ()
     {
+        // background image
+        this.add.image(450, 300, 'game_bg');
+        this.add.image(450, 300, 'sphynx').setScale(0.3);
+        
+        // combo text
+        this.comboText = this.add.text(SCREEN_WIDTH-200, SCREEN_HEIGHT/4, '', {fontFamily:'russo', opacity:'0', fontSize:'40px'});
+
         // create open arrows at the bottom of the screen
         this.add.image(LEFT_X, ARROW_Y, 'arrow_left').setScale(0.0625);
         this.add.image(UP_X, ARROW_Y, 'arrow_up').setScale(0.0625);
@@ -278,17 +302,26 @@ class Game extends Phaser.Scene
         this.add.image(RIGHT_X, ARROW_Y, 'arrow_right').setScale(0.0625);
 
         // active color text
-        this.colorText = this.add.text(0,SCREEN_HEIGHT-40,'colorText', {fontFamily:'russo', fontSize:'40px'});
+        this.colorText = this.add.text(5,SCREEN_HEIGHT-45,'colorText', {fontFamily:'russo', fontSize:'40px'});
         this.colorText.text = 'ACTIVE COLOR';
         this.colorText.setTint(HEX_BLUE);
         activeColor = this.colorText;
 
         // score text
-        this.scoreText = this.add.text(SCREEN_WIDTH-100, SCREEN_HEIGHT-40, 'scoreText', {fontFamily:'russo', fontSize:'40px'});
+        this.scoreText = this.add.text(SCREEN_WIDTH-100, SCREEN_HEIGHT-45, 'scoreText', {fontFamily:'russo', fontSize:'40px'});
         this.scoreText.setTint(HEX_BLACK);
         this.scoreText.text = '0';
 
+        // level text
+        this.levelText = this.add.text(5, 5, 'levelText', {fontFamily:'russo', fontSize:'40px'});
+        this.levelText.setTint(HEX_BLACK);
+        this.levelText.text = `${difficulty<2?"Level":"Nightmare"} ${level}`;
+
+        // instructions prompt
         this.instructions = this.add.image(450, 300, 'how_to_play');
+        
+        // background image
+        this.add.image()
         
         // pause button
         this.pauseButton = this.add.text(350,500,'pauseText', {fontFamily:'russo', fontSize:'40px'}).setOrigin(0).setInteractive();
@@ -297,9 +330,9 @@ class Game extends Phaser.Scene
 
         // pause event
         this.pauseButton.on('pointerup', ()=>{
-            this.instructions.x = 150;
-            this.instructions.y = 150;
-            this.instructions.setScale(0.4);
+            // this.instructions.x = 150;
+            // this.instructions.y = 150;
+            this.instructions.destroy(true);
             this.pauseButton.destroy(true);
             this.bgMusic.play()
             musicPlaying = true;
@@ -375,6 +408,7 @@ class Game extends Phaser.Scene
             // loop through game objects
             for(const arrow of currArrows)
             {
+                let deleted = false;
                 arrow.sprite.y += DROP_FACTOR; // move arrow
 
                 // if arrow is in target area and correct direction/color is inputted
@@ -391,11 +425,11 @@ class Game extends Phaser.Scene
                     {
                         this.comboText.text = "MISS";
                     }
-                    else if(tscore == GOOD_POINTS)
+                    else if(tscore == GOOD_POINTS*difficulty)
                     {
                         this.comboText.text = "GOOD";
                     }
-                    else if(tscore == GREAT_POINTS)
+                    else if(tscore == GREAT_POINTS*difficulty)
                     {
                         this.comboText.text = "GREAT";
                     }
@@ -408,6 +442,7 @@ class Game extends Phaser.Scene
                     this.comboText.setTint(getColorHex(arrow.color))
 
                     toDelete++; // one arrow will be popped from queue
+                    deleted = true;
 
                     this.scoreText.text = score.toString(); // update score text
 
@@ -416,6 +451,9 @@ class Game extends Phaser.Scene
 
                 // remove arrows that hit the bottom
                 if(arrow.sprite.y >= SCREEN_HEIGHT-ARROW_SIZE)
+                {
+                    toDelete++;
+                } else if(toDelete >= 1 && !deleted)
                 {
                     toDelete++;
                 }

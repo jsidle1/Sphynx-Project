@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/loginstyles.css') }}">
-    <title>DDR Phaser</title>
+    <title>Beat Sphynx</title>
 </head>
 <body>
     <img class="sphynx" src="{{url_for('static', filename='assets/Sphynx.png')}}">
-    <div class="title">Sphynx Beats</div>
+    <div class="title">Beat Sphynx</div>
     <div class="center">
         <div>
             <form class="holder" method="post">
@@ -16,6 +16,7 @@
                 <input class="input-input" name="password" type="password" placeholder="Password">
                 <input class="input-submit" type="submit" value="Login">
             </form>
+            <span class="err-msg">{{ data.err_msg }}</span>
         </div>
     </div>
 </body>
