@@ -15,7 +15,7 @@ def init_db():
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         cursor.execute('CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, completed_levels INTEGER, completed_difficulty INTEGER)')
-        cursor.execute('CREATE TABLE IF NOT EXISTS score (user_username TEXT PRIMARY KEY, score INTEGER, level_number INTEGER, level_difficulty INTEGER)')
+        cursor.execute('CREATE TABLE IF NOT EXISTS score (ID INTEGER PRIMARY KEY autoincrement, user_username TEXT, score INTEGER, level_number INTEGER, level_difficulty INTEGER)')
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
@@ -106,12 +106,12 @@ def score():
     score = request.json['score']
     name = request.json['name']
     level_number = request.json['level']
-    difficulty = request.json['difficulty']
+    level_difficulty = request.json['difficulty']
 
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
 
-        cursor.execute('SELECT score FROM score WHERE user_username = ? AND level_number = ?', (name, level_number))
+        cursor.execute('SELECT score FROM score WHERE user_username = ? AND level_number = ? AND level_difficulty = ?', (name, level_number, level_difficulty))
         existing_score = cursor.fetchone()
 
         if existing_score is None:
@@ -119,12 +119,12 @@ def score():
             cursor.execute('''
                 INSERT INTO score (user_username, score, level_number, level_difficulty)
                 VALUES (?, ?, ?, ?)
-                ''', (name, score, level_number, difficulty))
+                ''', (name, score, level_number, level_difficulty))
         elif score > existing_score[0]:
             # If the new score is greater than the existing score, update it
             cursor.execute('''
-                UPDATE score SET score = ? WHERE user_username = ? AND level_number = ?
-                ''', (score, name, level_number))
+                UPDATE score SET score = ? WHERE user_username = ? AND level_number = ? AND level_difficulty = ?
+                ''', (score, name, level_number, level_difficulty))
         
         cursor.execute('SELECT completed_levels FROM users WHERE username = ?', (name,))
         completed_levels = cursor.fetchone()[0]
