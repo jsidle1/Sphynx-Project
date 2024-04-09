@@ -241,7 +241,9 @@ class Game extends Phaser.Scene
 
         // pause event
         this.pauseButton.on('pointerup', ()=>{
-            this.instructions.destroy(true);
+            this.instructions.x = 150;
+            this.instructions.y = 150;
+            this.instructions.setScale(0.4);
             this.pauseButton.destroy(true);
             this.bgMusic.play()
             musicPlaying = true;
