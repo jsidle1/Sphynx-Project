@@ -1,0 +1,53 @@
+body
+{
+    overflow: hidden;
+}
+.sphynx
+{
+    position: absolute;
+    z-index: -1;
+    left:25%;
+    width: 50vw;
+}
+.center
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.holder
+{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    grid-template-rows: repeat(3, 1fr);
+}
+.input-submit
+{
+    font-size: 20px;
+    padding: 10px;
+    font-family: russo;
+
+}
+.title
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: russo;
+    font-size: 40px;
+}
+.input-input
+{
+    font-size: 20px;
+    font-family: russo;
+    padding: 10px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.792);
+    border: 1px solid rgba(0, 0, 0, 0.792);
+}
+@font-face {
+    font-family: russo;
+    src: url(./RussoOne-Regular.ttf);
+}
