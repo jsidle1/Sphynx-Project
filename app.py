@@ -145,8 +145,8 @@ def score():
         cursor.execute('SELECT completed_difficulty FROM users WHERE username = ?', (name,))
         completed_difficulty = cursor.fetchone()[0]
 
-        if completed_levels >= level_number and completed_difficulty < level_difficulty:
-            cursor.execute('UPDATE users SET completed_difficulty = ? WHERE username = ?', ((level_difficulty), name))
+        if completed_levels >= level_number and 2 == level_difficulty and completed_difficulty < level_number:
+            cursor.execute('UPDATE users SET completed_difficulty = ? WHERE username = ?', ((level_number), name))
         
         conn.commit()
 
