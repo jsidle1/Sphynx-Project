@@ -47,25 +47,66 @@ def index():
     
 @app.route('/levels', methods=['GET', 'POST'])
 def levels():
+
     if(request.method == 'POST'):
         level = int(request.form['level'])
         difficulty = int(request.form['difficulty'])
         name = str(request.form['name'])
         session['current_level'] = level
         session['current_difficulty'] = difficulty
+
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+
+            cursor.execute('SELECT completed_levels from users WHERE username=?', (name,))
+            completed_levels = cursor.fetchone()[0]
+
+            if(level > completed_levels + 1):
+                return redirect(url_for('levels', name=name))
+            if(difficulty > 1 and level < completed_levels):
+                return redirect(url_for('levels', name=name))
+
         data = {'script':level_scripts[level-1], 'difficulty':difficulty, 'name':name, 'level':level}
         return render_template('./index.html', data=data)
     else:
         if(request.args['name'] is None):
             return redirect(url_for('index'))
-        return render_template('./levelselect.html', data={'name':request.args['name']})
+        
+        name = request.args['name']
+        level_tags = []
+        
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+
+            cursor.execute('SELECT completed_levels from users WHERE username=?', (name,))
+            completed_levels = cursor.fetchone()[0]
+            cursor.execute('SELECT completed_difficulty from users WHERE username=?', (name,))
+            completed_difficulty = cursor.fetchone()[0]
+
+            for i in range(1,4):
+                if(i - completed_levels < 1):
+                    level_tags.append('level-completed')
+                elif(i - completed_levels == 1):
+                    level_tags.append('level-unlocked')
+                else:
+                    level_tags.append('level-locked')
+            for i in range(1,4):
+                if(i - completed_levels <= 0):
+                    if(i - completed_difficulty < 1):
+                        level_tags.append('level-completed')
+                    else:
+                        level_tags.append('level-unlocked')
+                else:
+                    level_tags.append('level-locked')
+
+        return render_template('./levelselect.html', data={'name':name, 'level_tags':level_tags})
 
 @app.route('/score', methods=['GET', 'POST'])
 def score():
     score = request.json['score']
     name = request.json['name']
-    level_number = int(session.get('current_level'))
-    level_difficulty = int(session.get('current_difficulty'))
+    level_number = request.json['level']
+    level_difficulty = request.json['difficulty']
 
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
@@ -78,7 +119,7 @@ def score():
             cursor.execute('''
                 INSERT INTO score (user_username, score, level_number, level_difficulty)
                 VALUES (?, ?, ?, ?)
-                ''', (name, score, level_number, session.get('current_difficulty')))
+                ''', (name, score, level_number, level_difficulty))
             
             cursor.execute('SELECT total_score FROM users where username = ?', (name,))
             total_score = cursor.fetchone()[0]
