@@ -14,8 +14,8 @@ with open('./static/levels/levels.json', 'r') as infile:
 def init_db():
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
-        cursor.execute('CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, completed_levels INTEGER, completed_difficulty INTEGER)')
-        cursor.execute('CREATE TABLE IF NOT EXISTS score (ID INTEGER PRIMARY KEY autoincrement, user_username TEXT, score INTEGER, level_number INTEGER, level_difficulty INTEGER)')
+        cursor.execute('CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT, completed_levels INTEGER DEFAULT 0, completed_difficulty INTEGER DEFAULT 0, total_score INTEGER DEFAULT 0)')
+        cursor.execute('CREATE TABLE IF NOT EXISTS score (ID INTEGER PRIMARY KEY autoincrement, user_username TEXT, score INTEGER DEFAULT 0, level_number INTEGER DEFAULT 0, level_difficulty INTEGER DEFAULT 0)')
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/home', methods=['GET', 'POST'])
@@ -79,17 +79,33 @@ def score():
                 INSERT INTO score (user_username, score, level_number, level_difficulty)
                 VALUES (?, ?, ?, ?)
                 ''', (name, score, level_number, session.get('current_difficulty')))
+            
+            cursor.execute('SELECT total_score FROM users where username = ?', (name,))
+            total_score = cursor.fetchone()[0]
+            if total_score is not None:
+                score = total_score + score
+
+            cursor.execute('UPDATE users SET total_score = ? WHERE username = ?', (score, name,))
         elif score > existing_score[0]:
             # If the new score is greater than the existing score, update it
             cursor.execute('''
                 UPDATE score SET score = ? WHERE user_username = ? AND level_number = ? AND level_difficulty = ?
                 ''', (score, name, level_number, level_difficulty))
+            cursor.execute('SELECT total_score FROM users where username = ?', (name,))
+            new_score = cursor.fetchone()[0] + (score - existing_score[0])
+            cursor.execute('UPDATE users SET total_score = ? WHERE username = ?', (new_score, name,))
         
         cursor.execute('SELECT completed_levels FROM users WHERE username = ?', (name,))
         completed_levels = cursor.fetchone()[0]
 
-        if level_number == completed_levels + 1:
+        if level_number > completed_levels:
             cursor.execute('UPDATE users SET completed_levels = ? WHERE username = ?', (level_number, name))
+
+        cursor.execute('SELECT completed_difficulty FROM users WHERE username = ?', (name,))
+        completed_difficulty = cursor.fetchone()[0]
+
+        if completed_levels >= level_number and completed_difficulty < level_difficulty:
+            cursor.execute('UPDATE users SET completed_difficulty = ? WHERE username = ?', ((completed_difficulty + 1), name))
         
         conn.commit()
 
