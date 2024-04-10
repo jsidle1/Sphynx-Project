@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import json, sqlite3
 
 app = Flask(__name__)
@@ -146,11 +146,29 @@ def score():
         completed_difficulty = cursor.fetchone()[0]
 
         if completed_levels >= level_number and completed_difficulty < level_difficulty:
-            cursor.execute('UPDATE users SET completed_difficulty = ? WHERE username = ?', ((completed_difficulty + 1), name))
+            cursor.execute('UPDATE users SET completed_difficulty = ? WHERE username = ?', ((level_difficulty), name))
         
         conn.commit()
 
     return render_template('./score_report.html', data={'name':name, 'score':score})
+
+@app.route('/getscores', methods=['GET'])
+def getscores():
+    data = {
+      "data":
+        [{
+          "Group": "Sphynx",
+          "Title": "Top 5 Scores"
+        }]
+    }
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT username,total_score FROM users ORDER BY total_score DESC')
+        results = cursor.fetchall()[:5]
+        for res in results:
+            data['data'][0][res[0]] = res[1]
+
+    return jsonify(data)
 
 if __name__ == "__main__":
     init_db()
