@@ -59,6 +59,27 @@ input
 {
     background-color: #AAA;
 }
+.user
+{
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-family: russo;
+    font-size: 20px;
+}
+.logout
+{
+    position: absolute;
+    left: calc(100% - 150px);
+    top: 20px;
+    font-size: 20px;
+    font-family: russo;
+    padding: 5px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.792);
+    border: 1px solid rgba(0, 0, 0, 0.792);
+    text-decoration: none;
+}
 @font-face {
     font-family: russo;
     src: url(./RussoOne-Regular.ttf);

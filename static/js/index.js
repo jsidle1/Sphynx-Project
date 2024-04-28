@@ -375,7 +375,7 @@ class Game extends Phaser.Scene
                     contentType: 'application/json;charset=UTF-8',
                     dataType: 'json',
                     data : JSON.stringify({name:name, score:score, level:level, difficulty:difficulty})
-                }).done(window.location.replace(`${window.location.origin}/levels?name=${name}`));
+                }).done(setTimeout(()=>{window.location.replace(`${window.location.origin}/levels?name=${name}`);}, 1000));
             }
         }
         
