@@ -63,7 +63,7 @@ def levels():
 
             if(level > completed_levels + 1):
                 return redirect(url_for('levels', name=name))
-            if(difficulty > 1 and level < completed_levels):
+            if(difficulty > 1 and level > completed_levels):
                 return redirect(url_for('levels', name=name))
 
         data = {'script':level_scripts[level-1], 'difficulty':difficulty, 'name':name, 'level':level}
@@ -74,6 +74,7 @@ def levels():
         
         name = request.args['name']
         level_tags = []
+        total_score = 0
         
         with sqlite3.connect(DATABASE) as conn:
             cursor = conn.cursor()
@@ -82,6 +83,8 @@ def levels():
             completed_levels = cursor.fetchone()[0]
             cursor.execute('SELECT completed_difficulty from users WHERE username=?', (name,))
             completed_difficulty = cursor.fetchone()[0]
+            cursor.execute('SELECT total_score from users WHERE username=?', (name,))
+            total_score = cursor.fetchone()[0]
 
             for i in range(1,4):
                 if(i - completed_levels < 1):
@@ -99,7 +102,7 @@ def levels():
                 else:
                     level_tags.append('level-locked')
 
-        return render_template('./levelselect.html', data={'name':name, 'level_tags':level_tags})
+        return render_template('./levelselect.html', data={'name':name, 'level_tags':level_tags, 'score':str(total_score)})
 
 @app.route('/score', methods=['GET', 'POST'])
 def score():
