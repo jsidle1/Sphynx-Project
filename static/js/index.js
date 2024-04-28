@@ -42,6 +42,8 @@ const HIGH_THRESHOLD = 40;
 const GOOD_POINTS = 10;
 const GREAT_POINTS = 30;
 const PERFECT_POINTS = 50;
+const TIMES_2 = 4;
+const TIMES_4 = 10;
 
 // game globals
 var prevTime = 0;
@@ -56,49 +58,8 @@ var activeColor = 0;
 var score = 0;
 var paused = true;
 var musicPlaying = false;
-
-// sscript = [
-//     EMPTY, 
-//     DOWN, 
-//     EMPTY, 
-//     RIGHT, 
-//     RIGHT, 
-//     LEFT, 
-//     LEFT, 
-//     UP, 
-//     LEFT, 
-//     UP, 
-//     UP, 
-//     DOWN,
-//     EMPTY, 
-//     DOWN, 
-//     EMPTY, 
-//     RIGHT, 
-//     RIGHT, 
-//     EMPTY, 
-//     LEFT, 
-//     EMPTY, 
-//     LEFT, 
-//     UP, 
-//     EMPTY, 
-//     DOWN,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY,
-//     EMPTY
-// ]
+var multiplier = 1;
+var multiCount = 0;
 
 function getRandomCostume()
 {
@@ -317,6 +278,11 @@ class Game extends Phaser.Scene
         this.levelText.setTint(HEX_BLACK);
         this.levelText.text = `${difficulty<2?"Level":"Nightmare"} ${level}`;
 
+        // multiplier text
+        this.multiText = this.add.text(SCREEN_WIDTH-100, 5, 'multiText', {fontFamily:'russo', fontSize:'40px'});
+        this.multiText.setTint(HEX_BLACK);
+        this.multiText.text = "x1";
+
         // instructions prompt
         this.instructions = this.add.image(450, 300, 'how_to_play');
         
@@ -417,11 +383,11 @@ class Game extends Phaser.Scene
                     {
                         tscore = 0;
                     }
-                    score+=tscore; // score updated based on how close it is to target
-
+                    
                     if(tscore == 0)
                     {
                         this.comboText.text = "MISS";
+                        multiCount = 0; // multiplier lost
                     }
                     else if(tscore == GOOD_POINTS*difficulty)
                     {
@@ -434,11 +400,33 @@ class Game extends Phaser.Scene
                     else
                     {
                         this.comboText.text = "PERFECT";
+                        multiCount++;
                     }
                     this.comboText.setAlpha(1);
                     this.comboText.setScale(1);
                     this.comboText.setTint(getColorHex(arrow.color))
 
+                    if(multiCount >= TIMES_4 && multiplier != 4)
+                    {
+                        multiplier = 4;
+                        this.multiText.text = `x4`;
+                        this.multiText.setTint(HEX_RED);
+                    }
+                    else if(multiCount >= TIMES_2 && multiplier!= 2)
+                    {
+                        multiplier = 2;
+                        this.multiText.text = `x2`;
+                        this.multiText.setTint(HEX_PINK);
+                    }
+                    else if(multiplier != 1)
+                    {
+                        multiplier = 1;
+                        this.multiText.text = `x1`;
+                        this.multiText.setTint(HEX_BLACK);
+                    }
+                    
+                    score+=tscore*multiplier; // score updated based on how close it is to target
+                    
                     toDelete++; // one arrow will be popped from queue
                     deleted = true;
 
@@ -450,6 +438,10 @@ class Game extends Phaser.Scene
                 // remove arrows that hit the bottom
                 if(arrow.sprite.y >= SCREEN_HEIGHT-ARROW_SIZE)
                 {
+                    multiCount = 0; // multiplier lost
+                    multiplier = 1;
+                    this.multiText.text = `x1`;
+                    this.multiText.setTint(HEX_BLACK);
                     toDelete++;
                 } else if(toDelete >= 1 && !deleted)
                 {
