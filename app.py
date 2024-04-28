@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import requests
 import json, sqlite3
 
 app = Flask(__name__)
@@ -6,6 +7,7 @@ app.secret_key = 'admin'
 level_scripts = []
 
 DATABASE = 'database.db'
+API_URI = "https://eope3o6d7z7e2cc.m.pipedream.net";
 
 with open('./static/levels/levels.json', 'r') as infile:
     level_scripts = json.load(infile)
@@ -172,6 +174,28 @@ def getscores():
             data['data'][0][res[0]] = res[1]
 
     return jsonify(data)
+
+@app.route('/sendscores', methods=['GET'])
+def sendscores():
+    data = {
+      "data":
+        [{
+          "Group": "Sphynx",
+          "Title": "Top 5 Scores"
+        }]
+    }
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT username,total_score FROM users ORDER BY total_score DESC')
+        results = cursor.fetchall()[:5]
+        for res in results:
+            data['data'][0][res[0]] = res[1]
+
+    req = requests.post(API_URI, json=data)
+
+    response = {'text':req.text, 'status':req.status_code}
+
+    return jsonify(response)
 
 if __name__ == "__main__":
     init_db()
