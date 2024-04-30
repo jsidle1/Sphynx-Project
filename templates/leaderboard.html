@@ -7,13 +7,13 @@
     <title>Beat Sphynx</title>
 </head>
 <body>
-    <a class="logout" href="{{ url_for('levels') }}">Main Menu</a>
+    <a class="logout" href="{{ url_for('levels', name=data.name)}}">Main Menu</a>
     <img class="sphynx" src="{{ url_for('static', filename='assets/level_select_bg.png') }}"></img>
     <div class="center">
         <div class="grid">
             <div>
                 <ul>
-                    {% for user in data %}
+                    {% for user in (data.results) %}
                         <li> 
                             ID: {{ user[0] }} 
                             Points: {{ user[1] }} 

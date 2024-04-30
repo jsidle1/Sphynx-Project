@@ -159,13 +159,14 @@ def score():
 
 @app.route('/leaderboard', methods=['GET'])
 def leaderboard():
+    name = request.args["name"]
     data = {}
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         cursor.execute('SELECT username,total_score FROM users ORDER BY total_score DESC')
         results = cursor.fetchall()[:5]
 
-    return render_template('./leaderboard.html', data=results)
+    return render_template('./leaderboard.html', data={"results":results, "name":name})
 
 
 @app.route('/getscores', methods=['GET'])
