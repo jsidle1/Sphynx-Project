@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/levelselectstyles.css') }}">
+    <title>Beat Sphynx</title>
+</head>
+<body>
+    <a class="logout" href="{{ url_for('levels') }}">Main Menu</a>
+    <img class="sphynx" src="{{ url_for('static', filename='assets/level_select_bg.png') }}"></img>
+    <div class="center">
+        <div class="grid">
+            <div>
+                <ul>
+                    {% for user in data %}
+                        <li> 
+                            ID: {{ user[0] }} 
+                            Points: {{ user[1] }} 
+                        </li>            
+                    {% endfor %}
+                </ul>
+                
+            </div>
+            
+    
+</body>
+</html>

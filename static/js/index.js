@@ -406,13 +406,13 @@ class Game extends Phaser.Scene
                     this.comboText.setScale(1);
                     this.comboText.setTint(getColorHex(arrow.color))
 
-                    if(multiCount >= TIMES_4 && multiplier != 4)
+                    if(multiCount >= TIMES_4)
                     {
                         multiplier = 4;
                         this.multiText.text = `x4`;
                         this.multiText.setTint(HEX_RED);
                     }
-                    else if(multiCount >= TIMES_2 && multiplier!= 2)
+                    else if(multiCount >= TIMES_2)
                     {
                         multiplier = 2;
                         this.multiText.text = `x2`;

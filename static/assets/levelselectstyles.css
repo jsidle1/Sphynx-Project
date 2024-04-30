@@ -67,6 +67,43 @@ input
     font-family: russo;
     font-size: 20px;
 }
+
+/* Style the user list */
+ul {
+    list-style-type:none;
+    margin: 20px auto 0;
+    padding: 0;
+    width: 80%;
+    background: transparent;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.leaderboard {
+    position: absolute;
+    left: 20px;
+    top: 80px;
+    font-size: 20px;
+    font-family: russo;
+    padding: 5px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.792);
+    border: 1px solid rgba(0, 0, 0, 0.792);
+    text-decoration: none;
+}
+
+.level_select {
+        position: absolute;
+        left: 20px;
+        top: 80px;
+        font-size: 20px;
+        font-family: russo;
+        padding: 5px;
+        border: none;
+        background-color: rgba(255, 255, 255, 0.792);
+        border: 1px solid rgba(0, 0, 0, 0.792);
+        text-decoration: none;
+}
 .logout
 {
     position: absolute;

@@ -9,6 +9,7 @@
 <body>
     <div class="title">Level Select</div>
     <div class="user">User: {{ data.name }}<br>Score: {{ data.score }}</div>
+    <a class="leaderboard" href="{{ url_for('leaderboard') }}">Leaderboard</a>
     <a class="logout" href="{{ url_for('index') }}">Log Out</a>
     <img class="sphynx" src="{{ url_for('static', filename='assets/level_select_bg.png') }}"></img>
     <div class="center">
