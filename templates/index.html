@@ -9,6 +9,7 @@
     <title>Beat Sphynx</title>
 </head>
 <body>
+    <a class="quit" href="{{ url_for('levels', name=data.name) }}">Quit</a>
     <script>
         var difficulty = {{ data.difficulty }};
         var script = {{ data.script }};
