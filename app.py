@@ -106,7 +106,7 @@ def levels():
 
         return render_template('./levelselect.html', data={'name':name, 'level_tags':level_tags, 'score':str(total_score)})
 
-@app.route('/score', methods=['GET', 'POST'])
+@app.route('/score', methods=['POST'])
 def score():
     score = request.json['score']
     name = request.json['name']
