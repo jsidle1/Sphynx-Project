@@ -31,7 +31,7 @@ const NUM_COLORS = 4;
 // animation and bounds
 const MS_PER_SECOND = 1000;
 const PAINTS_PER_SECOND = 60;
-const BEATS_PER_SECOND = 1 * difficulty;
+const BEATS_PER_SECOND = 1 * (difficulty==2?1.25:1);
 const DROP_FACTOR = 2 * difficulty;
 const ROOM_FOR_ERROR = 20;
 const ARROW_SIZE = 50;
@@ -240,8 +240,10 @@ class Game extends Phaser.Scene
         this.load.image('sphynx', getRandomCostume());
         this.load.image('game_bg', 'static/assets/Game_bg.png');
 
-        // audio asset
-        this.load.audio('dance', 'static/music/dance.mp3');
+        // audio assets
+        this.load.audio('level_1', 'static/music/pretty_afternoon.mp3');
+        this.load.audio('level_2', 'static/music/ill_be_there.mp3');
+        this.load.audio('level_3', 'static/music/king_of_the_hill.mp3');
         
         // load font to make sure its downloaded in time
         this.add.text(0,0,'', {fontFamily:'russo', opacity:'0'});
@@ -305,7 +307,7 @@ class Game extends Phaser.Scene
             paused = !paused;
         });
 
-        this.bgMusic = this.sound.add('dance', {volume:0.5, loop:false}).setRate(1*difficulty);
+        this.bgMusic = this.sound.add(`level_${level}`, {volume:0.5, loop:false}).setRate(1*(difficulty==2?1.25:1));
     }
 
     update (time, delta)
